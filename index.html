@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microbiología & Genética (Modo Oscuro)</title>
+    <style>
+        /* --- FUENTES Y VARIABLES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap');
+
+        :root {
+            /* --- PALETA MODO OSCURO --- */
+            --bg-body: #121212;         /* Fondo principal muy oscuro */
+            --bg-content: #1e1e1e;      /* Fondo de tarjetas (gris oscuro) */
+            --text-main: #e0e0e0;       /* Texto principal (blanco suave) */
+            --text-secondary: #b0bec5;  /* Texto secundario (gris azulado) */
+            --border-color: #333333;    /* Líneas separadoras sutiles */
+            
+            /* Colores Temáticos (Ajustados para resaltar en oscuro) */
+            --theme-home: #5dade2;      /* Azul Claro */
+            --theme-ameba: #e67e22;     /* Naranja Brillante */
+            --theme-leish: #4cd137;     /* Verde Neón suave */
+            --theme-trypa: #a569bd;     /* Violeta Lavanda */
+            
+            --theme-recom: #26a69a;     /* Turquesa Brillante */
+            --theme-repli: #f06292;     /* Rosa Intenso */
+
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.5);
+            --radius: 12px;
+        }
+
+        /* --- ESTILOS BASE --- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+        }
+
+        /* --- NAVEGACIÓN --- */
+        header {
+            background-color: var(--bg-content);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            overflow-x: auto;
+        }
+
+        .brand {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--theme-home);
+            white-space: nowrap;
+            margin-right: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media(max-width: 850px) { .brand { display: none; } }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+        }
+
+        button.nav-btn {
+            background: transparent;
+            border: none;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #888;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        button.nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--theme-home);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        button.nav-btn:hover { color: #fff; }
+        
+        /* Estados activos dinámicos */
+        button.nav-btn.active { color: #fff; font-weight: 700; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        button.nav-btn[data-target="home"].active::after { background-color: var(--theme-home); width: 100%; }
+        button.nav-btn[data-target="amebiasis"].active::after { background-color: var(--theme-ameba); width: 100%; }
+        button.nav-btn[data-target="leishmania"].active::after { background-color: var(--theme-leish); width: 100%; }
+        button.nav-btn[data-target="trypanosoma"].active::after { background-color: var(--theme-trypa); width: 100%; }
+        button.nav-btn[data-target="recombinacion"].active::after { background-color: var(--theme-recom); width: 100%; }
+        button.nav-btn[data-target="replicacion"].active::after { background-color: var(--theme-repli); width: 100%; }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        main {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 0 20px;
+            min-height: 80vh;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- TIPOGRAFÍA DE CONTENIDO --- */
+        article {
+            background: var(--bg-content);
+            padding: 50px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            border: 1px solid #333;
+        }
+
+        h1.page-title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 300;
+            border-left: 4px solid #555;
+            padding-left: 15px;
+        }
+
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: #fff;
+        }
+
+        h3 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-top: 25px;
+        }
+
+        p {
+            font-family: 'Merriweather', serif;
+            font-size: 1.05rem;
+            color: #ccc;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            font-family: 'Merriweather', serif;
+            margin-bottom: 20px;
+            padding-left: 40px;
+            color: #ccc;
+        }
+        li { margin-bottom: 10px; }
+        
+        strong, em { color: #fff; }
+
+        /* Estilos específicos por tema (Colores en Títulos) */
+        #amebiasis .page-title { color: var(--theme-ameba); text-shadow: 0 0 15px rgba(230, 126, 34, 0.2); }
+        #amebiasis .subtitle { border-color: var(--theme-ameba); }
+        
+        #leishmania .page-title { color: var(--theme-leish); text-shadow: 0 0 15px rgba(76, 209, 55, 0.2); }
+        #leishmania .subtitle { border-color: var(--theme-leish); }
+        
+        #trypanosoma .page-title { color: var(--theme-trypa); text-shadow: 0 0 15px rgba(165, 105, 189, 0.2); }
+        #trypanosoma .subtitle { border-color: var(--theme-trypa); }
+
+        #recombinacion .page-title { color: var(--theme-recom); text-shadow: 0 0 15px rgba(38, 166, 154, 0.2); }
+        #recombinacion .subtitle { border-color: var(--theme-recom); }
+
+        #replicacion .page-title { color: var(--theme-repli); text-shadow: 0 0 15px rgba(240, 98, 146, 0.2); }
+        #replicacion .subtitle { border-color: var(--theme-repli); }
+
+        /* --- IMÁGENES --- */
+        .medical-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            opacity: 0.9;
+            transition: opacity 0.3s;
+            background: white; /* Fondo blanco por si la imagen es PNG transparente */
+        }
+        .medical-image:hover { opacity: 1; }
+
+        .img-caption {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            margin-top: -20px;
+            margin-bottom: 30px;
+        }
+
+        /* --- HOME GRID --- */
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .topic-card {
+            background: #252525;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .topic-card:hover { 
+            transform: translateY(-5px); 
+            background-color: #2a2a2a;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
+        }
+        .topic-card h3 { margin-top: 0; }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+            margin-top: 50px;
+        }
+
+        .author-badge {
+            display: inline-block;
+            background: var(--theme-home);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            vertical-align: middle;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        @media(max-width: 700px) {
+            button.nav-btn { padding: 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="brand">Microbiología & Genética</div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="switchTab('home')" data-target="home">Inicio</button>
+                <button class="nav-btn" onclick="switchTab('amebiasis')" data-target="amebiasis">Amebiasis</button>
+                <button class="nav-btn" onclick="switchTab('leishmania')" data-target="leishmania">Leishmania</button>
+                <button class="nav-btn" onclick="switchTab('trypanosoma')" data-target="trypanosoma">T. Cruzi</button>
+                <button class="nav-btn" onclick="switchTab('recombinacion')" data-target="recombinacion">Recombinación</button>
+                <button class="nav-btn" onclick="switchTab('replicacion')" data-target="replicacion">Replicación</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="tab-content active">
+            <article>
+                <h1 class="page-title" style="color: var(--theme-home)">Atlas de Microbiología Clínica y Bacteriana</h1>
+                <div class="subtitle">
+                    Investigación y síntesis documental <span class="author-badge">Por: Franco Yaiel Baraibar</span>
+                </div>
+
+                <p>
+                    Bienvenido a este compendio digital en modo oscuro para facilitar la lectura prolongada. Esta plataforma tiene un doble propósito: primero, explorar en profundidad tres agentes patógenos críticos para la salud pública (Amebiasis, Leishmania y Chagas); y segundo, desglosar los mecanismos genéticos fundamentales que permiten a las bacterias sobrevivir y evolucionar (Recombinación y Replicación).
+                </p>
+
+                <div class="home-grid">
+                    <div class="topic-card" style="border-top: 3px solid var(--theme-ameba)">
+                        <h3 style="color: var(--theme-ameba)">Patógenos: Amebiasis</h3>
+                        <p style="font-size: 0.9rem; margin:0; color: #aaa;">Análisis de <em>Entamoeba histolytica</em>, sus formas invasivas y consecuencias intestinales y hepáticas.</p>
+                    </div>
+                    <div class="topic-card" style="border-top: 3px solid var(--theme-leish)">
+                        <h3 style="color: var(--theme-leish)">Patógenos: Leishmania</h3>
+                        <p style="font-size: 0.9rem; margin:0; color: #aaa;">Estudio de vectores flebótomos y las variantes clínicas (cutánea, mucocutánea y visceral).</p>
+                    </div>
+                    <div class="topic-card" style="border-top: 3px solid var(--theme-trypa)">
+                        <h3 style="color: var(--theme-trypa)">Patógenos: T. Cruzi</h3>
+                        <p style="font-size: 0.9rem; margin:0; color: #aaa;">El Mal de Chagas, su cronocidad cardíaca y transmisión vectorial por triatominos.</p>
+                    </div>
+                    <div class="topic-card" style="border-top: 3px solid var(--theme-recom)">
+                        <h3 style="color: var(--theme-recom)">Genética: Recombinación</h3>
+                        <p style="font-size: 0.9rem; margin:0; color: #aaa;">Mecanismos de transferencia horizontal de genes: Transformación, Transducción y Conjugación.</p>
+                    </div>
+                    <div class="topic-card" style="border-top: 3px solid var(--theme-repli)">
+                        <h3 style="color: var(--theme-repli)">Genética: Replicación</h3>
+                        <p style="font-size: 0.9rem; margin:0; color: #aaa;">Fisión Binaria, el proceso de reproducción asexual y crecimiento exponencial bacteriano.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section id="amebiasis" class="tab-content">
+            <article>
+                <h1 class="page-title">Amebiasis</h1>
+                <div class="subtitle">Agente Etiológico: <em>Entamoeba histolytica</em></div>
+
+                <h2>Definición y Biología</h2>
+                <p>
+                    La amebiasis es una infección parasitaria del intestino grueso causada por el protozoo <em>Entamoeba histolytica</em>. A diferencia de otras amebas comensales, esta especie tiene la capacidad única de invadir tejidos mediante lectinas que se adhieren a las células del huésped y enzimas (cisteína proteasas) que las degradan. El ciclo de vida comprende el <strong>quiste</strong> (forma infectante) y el <strong>trofozoíto</strong> (forma invasiva).
+                </p>
+
+                <h2>Cuadro Clínico y Síntomas</h2>
+                <p>
+                    La infección presenta un espectro clínico variable:
+                </p>
+                <ul>
+                    <li><strong>Disentería Amebiana:</strong> Inflamación severa del colon con heces sanguinolentas y mucosas, dolor abdominal y tenesmo.</li>
+                    <li><strong>Amebiasis Extraintestinal:</strong> La complicación más grave es el <strong>absceso hepático amebiano</strong>, donde el parásito migra al hígado causando fiebre, hepatomegalia y dolor en el cuadrante superior derecho.</li>
+                </ul>
+
+                <h2>Tratamiento y Prevención</h2>
+                <p>
+                    El tratamiento de elección incluye nitroimidazoles tisulares (<strong>Metronidazol</strong> o Tinidazol) seguidos de un amebicida luminal (Paromomicina) para erradicar los quistes. La prevención requiere saneamiento de aguas y correcta higiene alimentaria.
+                </p>
+
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Entamoeba_histolytica_life_cycle-en.svg" alt="Ciclo de Vida Entamoeba Histolytica" class="medical-image">
+                <div class="img-caption">Esquema del ciclo biológico: Quistes infecciosos y trofozoítos invasivos.</div>
+            </article>
+        </section>
+
+        <section id="leishmania" class="tab-content">
+            <article>
+                <h1 class="page-title">Leishmaniasis</h1>
+                <div class="subtitle">Vector: Flebótomos (Géneros <em>Lutzomyia</em> y <em>Phlebotomus</em>)</div>
+
+                <h2>Etiología y Transmisión</h2>
+                <p>
+                    Enfermedad causada por protozoos del género <em>Leishmania</em>, parásitos intracelulares obligados que infectan a los macrófagos del sistema inmune. Se transmite por la picadura de hembras de flebótomos infectados.
+                </p>
+
+                <h2>Manifestaciones Clínicas</h2>
+                <ul>
+                    <li><strong>L. Cutánea:</strong> Úlceras en la piel, indoloras pero propensas a sobreinfección bacteriana. Deja cicatrices atróficas.</li>
+                    <li><strong>L. Mucocutánea:</strong> Diseminación del parásito a las mucosas nasofaríngeas, causando destrucción de cartílago y deformidad facial (nariz de tapir).</li>
+                    <li><strong>L. Visceral (Kala-azar):</strong> Fiebre, pérdida de peso, pancitopenia (baja de glóbulos rojos, blancos y plaquetas) y esplenomegalia masiva.</li>
+                </ul>
+
+                <h2>Tratamiento</h2>
+                <p>
+                    Históricamente se han usado antimoniales pentavalentes (Glucantime). En casos de resistencia o formas viscerales graves, se utiliza Anfotericina B liposomal o Miltefosina.
+                </p>
+                
+                <img src="https://static.elsevier.es/multimedia/00017310/0000010400000004/v1_201304241400/S000173101200542X/v1_201304241400/es/main.assets/gr3.jpeg" alt="Leishmania Lesión" class="medical-image">
+                <div class="img-caption">Presentación clínica característica de la Leishmaniasis.</div>
+            </article>
+        </section>
+
+        <section id="trypanosoma" class="tab-content">
+            <article>
+                <h1 class="page-title">Trypanosoma Cruzi</h1>
+                <div class="subtitle">Patología: Enfermedad de Chagas</div>
+
+                <h2>Mecanismo de Infección</h2>
+                <p>
+                    El <em>Trypanosoma cruzi</em> se transmite principalmente a través de las heces de insectos triatominos (vinchucas). Al picar, el insecto defeca; el rascado de la víctima introduce los parásitos en la herida o mucosas.
+                </p>
+
+                <h2>Historia Natural de la Enfermedad</h2>
+                <ul>
+                    <li><strong>Fase Aguda:</strong> Generalmente asintomática. Puede aparecer el "Chagoma de inoculación" o el <strong>Signo de Romaña</strong> (edema palpebral unilateral). Se detectan parásitos en sangre.</li>
+                    <li><strong>Fase Crónica:</strong> Décadas después, el daño tisular progresivo causa miocardiopatía chagásica (arritmias, insuficiencia cardíaca) o megavísceras (megaesófago, megacolon).</li>
+                </ul>
+
+                <h2>Control</h2>
+                <p>
+                    El tratamiento etiológico (Benznidazol) es efectivo solo en fases tempranas. El control vectorial (mejoramiento de viviendas, insecticidas) es la principal estrategia de prevención.
+                </p>
+                
+                <img src="https://cdn.lecturio.com/assets/Photomicrograph-four-flagellated-Trypanosoma-cruzi-parasites-trypomastigotes.jpg" alt="Trypanosoma Cruzi Microscopia" class="medical-image">
+                <div class="img-caption">Frotis sanguíneo mostrando tripomastigotes flagelados de T. Cruzi.</div>
+            </article>
+        </section>
+
+        <section id="recombinacion" class="tab-content">
+            <article>
+                <h1 class="page-title">Recombinación Bacteriana</h1>
+                <div class="subtitle">Mecanismos de Transferencia Horizontal de Genes (HGT)</div>
+
+                <h2>Concepto General</h2>
+                <p>
+                    La recombinación genética en bacterias es un proceso unidireccional donde una bacteria donante transfiere material genético (ADN) a una receptora. A diferencia de la reproducción sexual en eucariotas, aquí no hay formación de gametos ni fusión de células completas. Este fenómeno es crucial para la evolución bacteriana, permitiendo la adquisición rápida de características como la <strong>resistencia a antibióticos</strong> y factores de virulencia.
+                </p>
+
+                <h2>Mecanismos Principales</h2>
+                <p>Existen tres mecanismos clásicos de transferencia de material genético:</p>
+
+                <h3>1. Transformación</h3>
+                <p>
+                    Es la captación de ADN "desnudo" o libre que se encuentra en el medio ambiente (generalmente proveniente de otras bacterias muertas o lisadas).
+                </p>
+                <ul>
+                    <li><strong>Competencia:</strong> Para captar este ADN, la bacteria receptora debe estar en un estado fisiológico llamado "competencia", alterando su pared celular para permitir el paso de grandes moléculas.</li>
+                    <li><strong>Experimento de Griffith:</strong> Fue descubierto en 1928, demostrando que bacterias inocuas podían "transformarse" en virulentas al captar material de bacterias patógenas muertas.</li>
+                </ul>
+
+                <h3>2. Transducción</h3>
+                <p>
+                    Transferencia de ADN mediada por un virus bacteriófago. Ocurre cuando un virus infecta una bacteria y, por error, empaqueta fragmentos de ADN bacteriano en su cápside en lugar de su propio genoma viral. Al infectar una nueva bacteria, inyecta este ADN bacteriano.
+                </p>
+
+                <h3>3. Conjugación</h3>
+                <p>
+                    Es el proceso que requiere <strong>contacto directo célula a célula</strong>. Una bacteria donante (F+) posee un plásmido (ADN circular extracromosómico) que codifica para la formación de un <em>pilus sexual</em>.
+                </p>
+                <ul>
+                    <li>El pilus conecta ambas bacterias formando un puente citoplasmático.</li>
+                    <li>El plásmido se replica y una copia se transfiere a la bacteria receptora.</li>
+                    <li>Es el mecanismo más eficaz para la diseminación de la resistencia a múltiples drogas en hospitales.</li>
+                </ul>
+                
+                <img src="https://aulavirtual.iesabyla.es/pluginfile.php/4320/mod_resource/content/4/07.21w.jpg" alt="Mecanismos de Recombinación" class="medical-image">
+                <div class="img-caption">Comparación visual entre Transformación, Transducción y Conjugación.</div>
+            </article>
+        </section>
+
+        <section id="replicacion" class="tab-content">
+            <article>
+                <h1 class="page-title">Replicación Bacteriana</h1>
+                <div class="subtitle">Proceso de Fisión Binaria y Crecimiento Exponencial</div>
+
+                <h2>Fisión Binaria (Bipartición)</h2>
+                <p>
+                    Las bacterias se reproducen asexualmente mediante un proceso denominado <strong>fisión binaria</strong>. A diferencia de la mitosis en células eucariotas (que implica la división de un núcleo complejo), la fisión binaria es un proceso más directo pero altamente regulado, que da como resultado dos células hijas genéticamente idénticas (clones) a la célula madre.
+                </p>
+
+                <h2>Etapas del Proceso</h2>
+                <ol>
+                    <li><strong>Replicación del ADN:</strong> El cromosoma bacteriano (generalmente único y circular) comienza a duplicarse en un punto específico llamado <em>origen de replicación</em>. Las enzimas separan la doble hélice y sintetizan nuevas cadenas.</li>
+                    <li><strong>Elongación Celular:</strong> A medida que el ADN se replica, la bacteria aumenta su tamaño y longitud. Los dos cromosomas resultantes se anclan a la membrana plasmática y migran hacia polos opuestos de la célula.</li>
+                    <li><strong>Formación del Septo:</strong> Una proteína clave llamada <strong>FtsZ</strong> se ensambla en el centro de la célula formando un anillo (anillo Z). Este anillo dirige la invaginación de la membrana y la síntesis de nueva pared celular (peptidoglicano) hacia el interior.</li>
+                    <li><strong>Citocinesis:</strong> El septo se cierra completamente, separando el citoplasma en dos compartimentos y liberando finalmente las dos células hijas independientes.</li>
+                </ol>
+
+                <h2>Crecimiento Exponencial</h2>
+                <p>
+                    La velocidad de este proceso puede ser asombrosa. En condiciones óptimas, bacterias como <em>Escherichia coli</em> pueden dividirse cada 20 minutos. Esto conduce a un crecimiento exponencial (logarítmico).
+                </p>
+                <ul>
+                    <li><strong>Fase de latencia:</strong> Adaptación al medio.</li>
+                    <li><strong>Fase exponencial (Log):</strong> División constante a velocidad máxima.</li>
+                    <li><strong>Fase estacionaria:</strong> Agotamiento de nutrientes, el crecimiento se detiene.</li>
+                </ul>
+                
+                <img src="https://www.ciencia.cl/CienciaAlDia/volumen3/numero1/articulos/calzada/Figura_4.gif" alt="Fisión Binaria Animación" class="medical-image">
+                <div class="img-caption">Animación del proceso de Fisión Binaria y formación del septo.</div>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desarrollo Web y Recopilación: <strong>Franco Yaiel Baraibar</strong></p>
+        <p>&copy; 2025. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function switchTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const selectedContent = document.getElementById(tabName);
+            if(selectedContent) {
+                selectedContent.classList.add('active');
+            }
+
+            const selectedBtn = document.querySelector(`button[data-target="${tabName}"]`);
+            if(selectedBtn) {
+                selectedBtn.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
